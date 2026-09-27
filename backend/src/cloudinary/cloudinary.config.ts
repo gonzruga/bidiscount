@@ -2,9 +2,9 @@ import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
 
-  cloud_name: 'ghumodlh',
-  api_key: '271191134515749',
-  api_secret: 'W1v99iMsVnJYNgwVbippYk8HzS0',
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 
 });
 
