@@ -21,12 +21,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const [buyerName, setBuyerName] = useState('');
-  const [amount, setAmount] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [fulfillmentMethod, setFulfillmentMethod] = useState('PICKUP');
-  const [remarks, setRemarks] = useState('');
-
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -64,55 +58,6 @@ export default function HomePage() {
       setError('Unable to load products.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const submitOffer = async (
-    e: React.FormEvent<HTMLFormElement>,
-    productId: string,
-  ) => {
-    e.preventDefault();
-
-    setSubmittingOffer(true);
-    setOfferError('');
-    setOfferSuccess('');
-
-    try {
-      await api.post(`/products/${productId}/offers`, {
-        buyerName,
-        amount: Number(amount),
-        endDate,
-        fulfillmentMethod,
-        remarks: remarks || undefined,
-      });
-
-      setOfferSuccess('Offer submitted successfully.');
-
-      // Clear the form
-      setBuyerName('');
-      setAmount('');
-      setEndDate('');
-      setFulfillmentMethod('PICKUP');
-      setRemarks('');
-    } catch (err: any) {
-      console.error(
-        'Failed to submit offer:',
-        err,
-      );
-
-      const message =
-        err?.response?.data?.message;
-
-      if (Array.isArray(message)) {
-        setOfferError(message.join(', '));
-      } else {
-        setOfferError(
-          message ||
-            'Unable to submit offer.',
-        );
-      }
-    } finally {
-      setSubmittingOffer(false);
     }
   };
 
