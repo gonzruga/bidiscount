@@ -98,7 +98,7 @@ export default function HomePage() {
               color: '#666',
             }}
           >
-            See a product somewhere? Upload it's picture and make an offer. Negotiate the price.
+            See a product somewhere? Upload it's picture and make an offer. Negotiate price.
             {/* Find a product. Make an offer. */}
           </p>
         </div>
