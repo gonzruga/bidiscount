@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProductStatus {
+  AVAILABLE
+  NOT_AVAILABLE
+}
+
+model Product {
+  id            String        @id @default(cuid())
+  image         String?
+  itemName      String
+  description   String?
+  shop          String
+  originalPrice Decimal       @db.Decimal(12, 2)
+  status        ProductStatus @default(AVAILABLE)
+
+  offers Offer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Offer {
+  id String @id @default(uuid())
+
+  productId         String
+
+  buyerName         String
+  amount            Decimal           @db.Decimal(10, 2)
+  endDate           DateTime
+  fulfillmentMethod FulfillmentMethod @default(PICKUP)
+  remarks           String?
+
+  status OfferStatus @default(PENDING)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  events OfferEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+   @@index([productId])
+}
+
+model OfferEvent {
+  id String @id @default(uuid())
+
+  offerId String
+
+  eventType OfferEventType
+  actorRole OfferActorRole
+
+  amount  Decimal? @db.Decimal(10, 2)
+  endDate DateTime?
+  remarks String?
+
+  respondsToEventId String?
+  respondsToEvent   OfferEvent? @relation("EventResponse", fields: [respondsToEventId], references: [id])
+  responses         OfferEvent[] @relation("EventResponse")
+
+  offer Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([offerId])
+}
+
+enum OfferEventType {
+  ACCEPT
+  COUNTEROFFER
+  REJECT
+  RETRACT
+}
+
+enum OfferActorRole {
+  BUYER
+  SELLER
+}
+
+enum OfferStatus {
+  PENDING
+  NEGOTIATION
+  ACCEPTED
+  REJECTED
+  RETRACTED
+}
+
+enum FulfillmentMethod {
+  PICKUP
+  DELIVERY
+  BOTH
+}
+
